@@ -4,12 +4,16 @@ require 'logger'
 
 module Reports
 
-  class NonexistentUser < StandardError; end
+  class Error < StandardError; end
+  class NonexistentUser < Error; end
+  class RequestFailure < Error; end
 
   User = Struct.new(:name, :location, :public_repos)
+  VALID_STATUS_CODES = [200, 302, 403, 404, 422]
 
   class GitHubAPIClient
     def initialize
+      level = ENV["LOG_LEVEL"]
       @logger = Logger.new(STDOUT)
       @logger.formatter = proc { |severity, datetime, program, message| message + "\n" }
     end
@@ -21,6 +25,10 @@ module Reports
       response = Faraday.get url
       duration = Time.now - start_time
       @logger.debug '-> %s %s %d (%.3f s)' % [url, 'GET', response.status, duration]
+
+      if !VALID_STATUS_CODES.include?(response.status)
+        raise RequestFailure, JSON.parse(response.body)["message"]
+      end
 
       if response.status == 404
         raise NonexistentUser, "'#{username}' does not exist"
