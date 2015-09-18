@@ -1,0 +1,26 @@
+
+[1mFrom:[0m /home/jason/tealeaf/apis/github_reports/lib/reports/github_api_client.rb @ line 29 Reports::GitHubAPIClient#user_info:
+
+    [1;34m22[0m: [32mdef[0m [1;34muser_info[0m(username)
+    [1;34m23[0m:   headers = {[31m[1;31m"[0m[31mAuthorization[1;31m"[0m[31m[0m => [31m[1;31m"[0m[31mtoken #{@token}[0m[31m[1;31m"[0m[31m[0m}
+    [1;34m24[0m:   url = [31m[1;31m"[0m[31mhttps://api.github.com/users/#{username}[0m[31m[1;31m"[0m[31m[0m
+    [1;34m25[0m: 
+    [1;34m26[0m:   start_time = [1;34;4mTime[0m.now
+    [1;34m27[0m:   response = [1;34;4mFaraday[0m.get(url, [1;36mnil[0m, headers)
+    [1;34m28[0m: 
+ => [1;34m29[0m:   require [31m[1;31m'[0m[31mpry[1;31m'[0m[31m[0m; binding.pry;
+    [1;34m30[0m:   duration = [1;34;4mTime[0m.now - start_time
+    [1;34m31[0m:   @logger.debug [31m[1;31m'[0m[31m-> %s %s %d (%.3f s)[1;31m'[0m[31m[0m % [url, [31m[1;31m'[0m[31mGET[1;31m'[0m[31m[0m, response.status, duration]
+    [1;34m32[0m: 
+    [1;34m33[0m:   [32mif[0m ![1;34;4mVALID_STATUS_CODES[0m.include?(response.status)
+    [1;34m34[0m:     raise [1;34;4mRequestFailure[0m, [1;34;4mJSON[0m.parse(response.body)[[31m[1;31m"[0m[31mmessage[1;31m"[0m[31m[0m]
+    [1;34m35[0m:   [32mend[0m
+    [1;34m36[0m: 
+    [1;34m37[0m:   [32mif[0m response.status == [1;34m404[0m
+    [1;34m38[0m:     raise [1;34;4mNonexistentUser[0m, [31m[1;31m"[0m[31m'#{username}[0m[31m' does not exist[1;31m"[0m[31m[0m
+    [1;34m39[0m:   [32mend[0m
+    [1;34m40[0m: 
+    [1;34m41[0m:   data = [1;34;4mJSON[0m.parse(response.body)
+    [1;34m42[0m:   [1;34;4mUser[0m.new(data[[31m[1;31m"[0m[31mname[1;31m"[0m[31m[0m], data[[31m[1;31m"[0m[31mlocation[1;31m"[0m[31m[0m], data[[31m[1;31m"[0m[31mpublic_repos[1;31m"[0m[31m[0m])
+    [1;34m43[0m: [32mend[0m
+
